@@ -205,3 +205,11 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+#VaultLog specific
+vault.db
+entries.db
+data/
+secrets/
+*.env
+config.json
