@@ -15,8 +15,7 @@ Most journaling tools store data in the cloud. VaultLog is meant for people who 
 ## Limitations
 - Losing the password/key means losing access to the data  
 - In-memory search may slow down with very large log sets  
-- GUI is minimal for now  
-- First project on GitHub, so structure and style will improve over time  
+- GUI is minimal for now
 
 ## Roadmap
 - Better key handling  
@@ -26,4 +25,3 @@ Most journaling tools store data in the cloud. VaultLog is meant for people who 
 
 ## Status
 Active development. First version is live and will continue to improve as I learn and grow.
-
