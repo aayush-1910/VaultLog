@@ -1,0 +1,204 @@
+# =====================================================================
+#  VaultLog - private data (NEVER commit journals, keys or exports)
+# =====================================================================
+*.vault
+*.vault-journal
+*.vault-wal
+*.vault-shm
+.vaultlog/
+vault.db
+entries.db
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.sqlite-journal
+data/
+secrets/
+backups/
+exports/
+*-export*.json
+backup*.json
+*.key
+*.pem
+*.p12
+*.pfx
+config.json
+config.local.*
+
+# =====================================================================
+#  Python
+# =====================================================================
+__pycache__/
+*.py[codz]
+*$py.class
+*.so
+*.pyd
+.Python
+__pypackages__/
+cython_debug/
+*.sage.py
+
+# Packaging
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+pip-wheel-metadata/
+*.egg-info/
+*.egg
+.installed.cfg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+.pypirc
+
+# PyInstaller / release artifacts (built by scripts/build.py and CI)
+*.spec
+*.manifest
+*-version.txt
+release/
+*.exe
+*.msi
+*.msix
+*.dmg
+*.pkg
+*.AppImage
+*.zip
+*.7z
+*.tar.gz
+SHA256SUMS*
+
+# Testing / coverage / type checkers / linters
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+nosetests.xml
+*.cover
+*.py.cover
+cover/
+.hypothesis/
+.cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+.benchmarks/
+
+# Virtual environments & tool state
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+.pixi/
+.pdm-python
+.pdm-build/
+.python-version
+.uv/
+
+# Environment variables / local secrets
+.env
+.env.*
+!.env.example
+.envrc
+*.env
+
+# Notebooks / docs builds
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+docs/_build/
+/site
+
+# =====================================================================
+#  Editors & IDEs
+# =====================================================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.code-workspace
+.history/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+.spyderproject
+.spyproject
+.ropeproject
+*.swp
+*.swo
+*~
+\#*\#
+.\#*
+.cursorignore
+.cursorindexingignore
+.fleet/
+.zed/
+
+# AI assistants (local session state)
+.claude/settings.local.json
+.claude/*.local.*
+.aider*
+.continue/
+
+# =====================================================================
+#  Operating systems
+# =====================================================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.stackdump
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.TemporaryItems
+.DocumentRevisions-V100
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
+# =====================================================================
+#  Misc
+# =====================================================================
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+tmp/
+temp/
+scratch/

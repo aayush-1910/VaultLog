@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vaultlog"
+version = "0.1.0"
+description = "Offline, AES-encrypted journal with CLI and GUI"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = ["cryptography>=41"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+build = ["pyinstaller>=6"]
+
+[project.scripts]
+vaultlog = "vaultlog.cli:main"
+
+[project.gui-scripts]
+vaultlog-gui = "vaultlog.gui:run"
+
+[tool.setuptools]
+packages = ["vaultlog"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
