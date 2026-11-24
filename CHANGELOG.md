@@ -5,10 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-11-24
+## [0.1.1] - 2026-11-24
 ### Fixed
 - `vaultlog-cli.exe` no longer closes instantly when double-clicked. With no arguments it now opens an interactive prompt.
 
+## [0.1.0] - 2026-11-24
 ### Added
 - AES-256-GCM encryption of every entry, with a password-wrapped data key (scrypt KDF).
 - Encrypted SQLite storage; only random ids and ciphertext are written to disk.
@@ -18,5 +19,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - JSON import/export.
 - Windows executables (`VaultLog.exe`, `vaultlog-cli.exe`) built with PyInstaller.
 
-[Unreleased]: https://github.com/aayush-1910/VaultLog/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/aayush-1910/VaultLog/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/aayush-1910/VaultLog/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/aayush-1910/VaultLog/releases/tag/v0.1.0
