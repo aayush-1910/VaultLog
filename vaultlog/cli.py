@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import getpass
 import json
 import os
+import shlex
 import sys
+import traceback
 from pathlib import Path
 
 from . import __version__
@@ -37,15 +40,33 @@ def _new_password() -> str:
     return pw
 
 
-def _open(args) -> Vault:
+# Set while the interactive shell is running: commands reuse this unlocked vault.
+_session: Vault | None = None
+
+
+def _open(args):
+    if _session is not None:
+        return contextlib.nullcontext(_session)
     if not Vault.exists(args.vault):
         raise VaultError(f"No vault at {args.vault}. Run 'vaultlog init' first.")
     return Vault.open(args.vault, _password())
 
 
+def _read_lines() -> str:
+    print("Write your entry. Type a single '.' on its own line to finish.")
+    lines = []
+    while True:
+        line = input()
+        if line.strip() == ".":
+            return "\n".join(lines)
+        lines.append(line)
+
+
 def _read_body(args) -> str:
     if args.message:
         return args.message
+    if _session is not None:
+        return _read_lines()
     if not sys.stdin.isatty():
         return sys.stdin.read()
     eof = "Ctrl+Z then Enter" if os.name == "nt" else "Ctrl+D"
@@ -237,8 +258,7 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
-def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+def _run(args) -> int:
     try:
         return args.func(args)
     except WrongPasswordError:
@@ -247,6 +267,111 @@ def main(argv: list[str] | None = None) -> int:
     except (VaultError, ValueError, OSError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
+
+
+def _split(line: str) -> list[str]:
+    if os.name != "nt":
+        return shlex.split(line)
+    # Keep Windows backslashes in paths; just strip surrounding quotes.
+    return [t[1:-1] if len(t) > 1 and t[0] == t[-1] and t[0] in "\"'" else t
+            for t in shlex.split(line, posix=False)]
+
+
+SHELL_HELP = """Commands:
+  add [-t TITLE] [--tags a,b] [-m TEXT]   write a new entry
+  list [-n N]                             list entries, newest first
+  search WORDS... | tag:NAME              search entries
+  show ID                                 show an entry (ID can be the first few chars)
+  edit ID [-m TEXT] [-t TITLE] [--tags a,b]
+  delete ID                               delete an entry
+  export FILE / import FILE               plaintext JSON export / import
+  passwd                                  change password
+  gui                                     open the GUI
+  help                                    show this help
+  exit                                    lock and quit
+"""
+
+
+def interactive(vault_path: Path | None = None) -> int:
+    """Shell used when the CLI is started without arguments (e.g. double-clicked)."""
+    global _session
+    parser = build_parser()
+    parser.exit_on_error = False
+    path = Path(vault_path) if vault_path else default_vault_path()
+
+    print(f"VaultLog {__version__} - encrypted offline journal")
+    print(f"Vault: {path}\n")
+    try:
+        if not Vault.exists(path):
+            print("No vault found. Let's create one.")
+            print("Choose a strong password - it cannot be recovered if lost.")
+            Vault.create(path, _new_password()).close()
+            print("Vault created.\n")
+        for attempt in range(3):
+            try:
+                _session = Vault.open(path, _password())
+                break
+            except WrongPasswordError:
+                print("Incorrect password." + (" Try again." if attempt < 2 else ""))
+        else:
+            return 2
+    except (VaultError, ValueError) as exc:
+        print(f"error: {exc}")
+        return 2
+
+    print(f"Unlocked. {len(_session)} entries. Type 'help' for commands, 'exit' to quit.\n")
+    try:
+        while True:
+            try:
+                line = input("vaultlog> ").strip()
+            except EOFError:
+                break
+            if not line:
+                continue
+            if line in ("exit", "quit", "q"):
+                break
+            if line in ("help", "?", "h"):
+                print(SHELL_HELP)
+                continue
+            if line.split()[0] in ("init",):
+                print("Already unlocked; 'init' is only needed for a new vault.")
+                continue
+            try:
+                args = parser.parse_args(["--vault", str(path), *_split(line)])
+            except SystemExit:
+                continue  # argparse already printed the problem / help
+            except (argparse.ArgumentError, ValueError) as exc:
+                print(f"error: {exc}")
+                continue
+            try:
+                _run(args)
+            except KeyboardInterrupt:
+                print("\n(cancelled)")
+    except KeyboardInterrupt:
+        print()
+    finally:
+        _session.close()
+        _session = None
+    print("Locked. Bye!")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    if argv is None and len(sys.argv) == 1:
+        # Launched with no arguments, e.g. double-clicked: open the interactive shell
+        # and keep the window open on unexpected errors so they can be read.
+        try:
+            return interactive()
+        except Exception:
+            traceback.print_exc()
+            input("\nSomething went wrong. Press Enter to close...")
+            return 1
+        except KeyboardInterrupt:
+            return 130
+
+    args = build_parser().parse_args(argv)
+    try:
+        return _run(args)
     except KeyboardInterrupt:
         print(file=sys.stderr)
         return 130

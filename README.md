@@ -22,7 +22,7 @@ Grab the latest release from the [Releases page](https://github.com/aayush-1910/
 | File | What it is |
 |---|---|
 | `VaultLog.exe` | The GUI app. Double-click to run. |
-| `vaultlog-cli.exe` | The command-line tool. Run it from a terminal, e.g. `vaultlog-cli.exe list`. |
+| `vaultlog-cli.exe` | The command-line tool. Double-click it for an interactive prompt, or run it from a terminal with a command, e.g. `vaultlog-cli.exe list`. |
 | `VaultLog-x.y.z-windows-x64.zip` | Both executables plus README and LICENSE. |
 | `SHA256SUMS.txt` | Checksums for verifying the downloads. |
 
@@ -41,6 +41,8 @@ pip install -e .          # installs the `vaultlog` and `vaultlog-gui` commands
 ## Usage
 
 ### CLI
+Run `vaultlog` (or `vaultlog-cli.exe`) with no arguments to get an interactive prompt: unlock once, then type commands like `add`, `list` and `search`, and `exit` when done. With arguments it runs a single command:
+
 ```bash
 vaultlog init                                  # create a vault (asks for a password)
 vaultlog add -m "Today I learned about AES" --tags study,crypto

@@ -6,6 +6,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ## [0.1.0] - 2026-11-24
+### Fixed
+- `vaultlog-cli.exe` no longer closes instantly when double-clicked. With no arguments it now opens an interactive prompt.
+
 ### Added
 - AES-256-GCM encryption of every entry, with a password-wrapped data key (scrypt KDF).
 - Encrypted SQLite storage; only random ids and ciphertext are written to disk.

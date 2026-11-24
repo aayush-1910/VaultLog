@@ -54,6 +54,32 @@ def test_full_flow(env, capsys, tmp_path, monkeypatch):
     assert run("--vault", str(env), "list") == 0
 
 
+def test_interactive_shell(env, capsys, monkeypatch):
+    from vaultlog import cli
+
+    lines = iter([
+        "add -t Hello --tags shell",  # body typed line by line, ended by "."
+        "first line",
+        "second line",
+        ".",
+        "list",
+        "search tag:shell",
+        "bogus-command",               # bad input must not kill the shell
+        "show",                        # missing argument, also survives
+        "exit",
+    ])
+    monkeypatch.setattr("builtins.input", lambda *_: next(lines))
+    assert cli.interactive(env) == 0  # creates the vault on first run
+    out = capsys.readouterr().out
+    assert "Vault created" in out and "Unlocked" in out
+    assert out.count("Hello") >= 2 and "Locked. Bye!" in out
+    assert cli._session is None
+
+    from vaultlog.vault import Vault
+    with Vault.open(env, PW) as v:
+        assert v.entries()[0].body == "first line\nsecond line"
+
+
 def test_errors(env, capsys, monkeypatch):
     assert run("--vault", str(env), "list") == 2
     assert "init" in capsys.readouterr().err
